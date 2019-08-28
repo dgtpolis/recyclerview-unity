@@ -1,0 +1,23 @@
+{
+    "name": "studio.digitopolis.recycler-view",
+    "version": "0.0.1",
+    "displayName": "Recycler View",
+    "description": "",
+    "unity": "2019.2",
+    "unityRelease": "2f1",
+    "dependencies": {
+        "com.unity.burst": "1.1.2",
+        "com.unity.collections": "0.1.1",
+        "com.unity.jobs": "0.1.1",
+        "com.unity.mathematics": "1.1.0"
+    },
+    "keywords": [
+        "scroll",
+        "recycler"
+    ],
+    "author": {
+        "name": "Ariya Lawanitchanon",
+        "email": "arm.armariya@gmail.com",
+        "url": "https://digitopolis.studio"
+    }
+}
