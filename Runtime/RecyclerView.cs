@@ -60,6 +60,10 @@ namespace Digitopolis.RecyclerView {
         [SerializeField] private RectTransform m_Viewport;
         [SerializeField] private RectTransform m_Content;
         [SerializeField] private GameObject m_CellPrefab;
+
+        [Header("Config")]
+        [Tooltip("It will need group when you want to add/remove cell")]
+        [SerializeField] private bool m_IsNeedToCreateGroup = true;
 #pragma warning restore 649
 
         private int m_TempCurrentIndex;
@@ -108,7 +112,7 @@ namespace Digitopolis.RecyclerView {
             GenerateStarterCell();
         }
 
-        public void OnValueChanged(Vector2 _) {
+        public void OnValueChanged() {
             m_TempCurrentIndex = m_CurrentIndex;
 
             m_CurrentIndex = CalculateCurrentIndex();
@@ -146,40 +150,57 @@ namespace Digitopolis.RecyclerView {
                 ? m_NumberOfItem
                 : m_NumberOfItemInViewport + 4;
 
-            GameObject CreateParentGroup(string groupName) {
-                var go = new GameObject($"Group {groupName}", typeof(CanvasRenderer), typeof(Image));
-                var goRectTransform = go.GetComponent<RectTransform>();
-                goRectTransform.anchorMin = new Vector2(0.5f, 1f);
-                goRectTransform.anchorMax = new Vector2(0.5f, 1f);
-                goRectTransform.pivot = new Vector2(0.5f, 0.5f);
-                goRectTransform.sizeDelta = new Vector2(0f, 0f);
-
-                var goTransform = go.transform;
-
-                goTransform.SetParent(m_Content.transform);
-                goRectTransform.localPosition = Vector3.zero;
-                goRectTransform.anchoredPosition = Vector2.zero;
-
-                return go;
+            if (m_IsNeedToCreateGroup) {
+                CreateCellsWithGroup(countGenerate);
+                return;
             }
 
-            var groupNumber = 1;
-            var parent = CreateParentGroup($"{groupNumber}");
-            m_Parents.Add(parent);
+            CreateCellsWithoutGroup(countGenerate);
+        }
 
-            var parentTransform = parent.transform;
+        private void CreateCellsWithGroup(int countGenerate) {
+            if (m_IsNeedToCreateGroup) {
+                GameObject CreateParentGroup(string groupName) {
+                    var go = new GameObject($"Group {groupName}", typeof(CanvasRenderer), typeof(Image));
+                    var goRectTransform = go.GetComponent<RectTransform>();
+                    goRectTransform.anchorMin = new Vector2(0.5f, 1f);
+                    goRectTransform.anchorMax = new Vector2(0.5f, 1f);
+                    goRectTransform.pivot = new Vector2(0.5f, 0.5f);
+                    goRectTransform.sizeDelta = new Vector2(0f, 0f);
 
+                    var goTransform = go.transform;
 
-            for (var i = 0; i < countGenerate; i++) {
-                if (i % 3 == 0 && i != 0) {
-                    groupNumber++;
+                    goTransform.SetParent(m_Content.transform);
+                    goRectTransform.localPosition = Vector3.zero;
+                    goRectTransform.anchoredPosition = Vector2.zero;
 
-                    parent = CreateParentGroup($"{groupNumber}");
-                    m_Parents.Add(parent);
-
-                    parentTransform = parent.transform;
+                    return go;
                 }
-                CreateCell(i, parentTransform);
+
+                var groupNumber = 1;
+                var parent = CreateParentGroup($"{groupNumber}");
+                m_Parents.Add(parent);
+
+                var parentTransform = parent.transform;
+
+
+                for (var i = 0; i < countGenerate; i++) {
+                    if (i % 3 == 0 && i != 0) {
+                        groupNumber++;
+
+                        parent = CreateParentGroup($"{groupNumber}");
+                        m_Parents.Add(parent);
+
+                        parentTransform = parent.transform;
+                    }
+                    CreateCell(i, parentTransform);
+                }
+            }
+        }
+
+        private void CreateCellsWithoutGroup(int countGenerate) {
+            for (var i = 0; i < countGenerate; i++) {
+                CreateCell(i, m_Content);
             }
         }
 
