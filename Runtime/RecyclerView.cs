@@ -285,7 +285,7 @@ namespace Digitopolis.RecyclerView {
 
         private void Reset() {
             m_Content.localPosition = Vector3.zero;
-            OnValueChanged(Vector2.zero);
+            OnValueChanged();
         }
 
         private void CreateCell(int index, Transform parent) {
